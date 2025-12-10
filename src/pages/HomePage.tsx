@@ -14,7 +14,7 @@ export const HomePage = () => {
       {/* 顶部导航 */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="px-4 py-3">
-          <h1 className="text-lg font-semibold text-gray-800 text-center">代码链接合集</h1>
+          <h1 className="text-lg font-semibold text-gray-800 text-center">链接合集</h1>
         </div>
       </div>
 
