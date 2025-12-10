@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { SubPage } from './pages/SubPage';
 import { codeLinks } from './data/links';
@@ -8,7 +8,7 @@ function App() {
   useWeChat(); // 使用微信适配Hook
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {/* 主页 */}
         <Route path="/" element={<HomePage />} />
@@ -30,7 +30,7 @@ function App() {
         {/* 404重定向到主页 */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
