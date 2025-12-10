@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface SubPageProps {
@@ -9,6 +9,8 @@ interface SubPageProps {
 export const SubPage = ({ title, externalUrl }: SubPageProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [showFallback, setShowFallback] = useState(false);
+  const timerRef = useRef<number | null>(null);
 
   const handleBack = () => {
     navigate('/');
@@ -16,7 +18,45 @@ export const SubPage = ({ title, externalUrl }: SubPageProps) => {
 
   const handleIframeLoad = () => {
     setIsLoading(false);
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
   };
+
+  const openExternal = () => {
+    window.location.href = externalUrl;
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(externalUrl);
+      alert('链接已复制，可在浏览器中粘贴打开');
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = externalUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('链接已复制，可在浏览器中粘贴打开');
+    }
+  };
+
+  useEffect(() => {
+    // 如果 iframe 在超时时间内未触发 onLoad，则展示兜底
+    timerRef.current = window.setTimeout(() => {
+      if (isLoading) {
+        setShowFallback(true);
+      }
+    }, 3500);
+
+    return () => {
+      if (timerRef.current) {
+        window.clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="h-screen flex flex-col bg-white">
@@ -52,6 +92,28 @@ export const SubPage = ({ title, externalUrl }: SubPageProps) => {
           title={title}
           sandbox="allow-scripts allow-same-origin allow-forms"
         />
+
+        {showFallback && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/95 z-20">
+            <div className="text-center px-4">
+              <p className="text-sm text-gray-700 mb-4">该页面在当前环境可能无法内嵌打开</p>
+              <div className="space-y-2">
+                <button
+                  onClick={openExternal}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md"
+                >
+                  直接打开原链接
+                </button>
+                <button
+                  onClick={copyLink}
+                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg"
+                >
+                  复制链接
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 底部返回按钮 */}

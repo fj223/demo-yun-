@@ -6,8 +6,8 @@ export const useWeChat = () => {
     const handleWeChatShare = () => {
       // 设置微信分享配置（如果需要的话）
       const shareConfig = {
-        title: '代码链接合集',
-        desc: '整合多个实用代码链接，方便快捷访问',
+        title: '链接合集',
+        desc: '整合多个实用链接，方便快捷访问',
         link: window.location.href,
         imgUrl: '/favicon.svg'
       };
